@@ -1,5 +1,6 @@
 import os
 import discord
+from server import keep_alive
 
 TOKEN = os.environ['TOKEN']
 client = discord.Client()
@@ -19,4 +20,10 @@ async def on_message(message):
     if 'bruh' in message.content.lower():
         await message.channel.send('<:bruh:852935532697616407>')
 
+    # exec_maker('bruh', message.content.lower(), await message.channel.send('<:bruh:852935532697616407>'))
+
+# def exec_maker(check_for, in_what, statement):
+#     exec(f"if {check_for} in {in_what}: {statement}")
+
+keep_alive()
 client.run(TOKEN)
