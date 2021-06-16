@@ -13,15 +13,16 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.author.bot == True:
+        return
+
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
     if 'bruh' in message.content.lower():
         await message.channel.send('<:bruh:852935532697616407>')
 
-    # exec_maker('bruh', message.content.lower(), await message.channel.send('<:bruh:852935532697616407>'))
-
-# def exec_maker(check_for, in_what, statement):
-#     exec(f"if {check_for} in {in_what}: {statement}")
+    if 'i think' in message.content.lower():
+        await message.channel.send("NO! You can't think because you don't have a brain.")
 
 client.run(TOKEN)
