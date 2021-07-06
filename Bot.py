@@ -1,9 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-from youtubesearchpython import VideosSearch
-import youtube_dl
-import asyncio
+from cogs.music import Music
 
 TOKEN = os.environ['TOKEN']
 
@@ -37,40 +35,6 @@ async def on_ready():
 # async def count_error(ctx, error):
 #     if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
 #         await ctx.send("You took too long! Please look at your DM's as that's where I'm asking for the phrase you want to use")
-
-
-@bot.command()
-async def play(ctx, *args):
-    if not ctx.author.voice.channel:
-        ctx.reply("Join a voice channel first!")
-        return
-    if not args:
-        await ctx.reply("Please provide name of song!")
-        return
-    word = ' '.join(args)
-    music = VideosSearch(word, limit=1)
-    link = music.result()["result"][0]["link"]
-    bitrate = ctx.author.voice.channel.bitrate
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': "MUSIC/" + word + ".mp3",
-        'quiet': True,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': str(bitrate),
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([link])
-    client = await ctx.author.voice.channel.connect()
-    await ctx.send(link)
-    def after(error):
-        os.remove("MUSIC/" + word + ".mp3")
-        coro = client.disconnect()
-        fut = asyncio.run_coroutine_threadsafe(coro, client.loop)
-        fut.result()
-    client.play(discord.FFmpegOpusAudio("MUSIC/" + word + ".mp3"), after=after)
     
 
 @bot.event
@@ -88,5 +52,7 @@ async def on_message(message):
         await message.channel.send("NO! You can't think because you don't have a brain.")
 
     await bot.process_commands(message)
+
+bot.add_cog(Music(bot))
 
 bot.run(TOKEN)
