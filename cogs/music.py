@@ -4,7 +4,6 @@ from youtubesearchpython import VideosSearch
 import youtube_dl
 import asyncio
 import os
-import dill
 
 
 class Music(commands.Cog):

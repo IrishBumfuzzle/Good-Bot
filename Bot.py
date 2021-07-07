@@ -51,6 +51,9 @@ async def on_message(message):
     if 'i think' in message.content.lower():
         await message.channel.send("NO! You can't think because you don't have a brain.")
 
+    if 'sus' in message.content.lower():
+        await message.add_reaction("<:sus:862227814471565322>")
+
     await bot.process_commands(message)
 
 bot.add_cog(Music(bot))
