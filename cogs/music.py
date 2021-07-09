@@ -42,7 +42,7 @@ class Music(commands.Cog):
 
         ydl_opts = {
             'format': 'bestaudio',
-            'cookies': 'cookies.txt',
+            'cookiefile': 'cookies.txt',
             'noplaylist':'True',
             'quiet': 'True',
         }
