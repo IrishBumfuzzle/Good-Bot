@@ -14,7 +14,7 @@ class Music(commands.Cog):
 
     def after(self, error):
         coro = self._client.disconnect()
-        fut = asyncio.run_coroutine_threadsafe(coro, self._client.loop).result()
+        asyncio.run_coroutine_threadsafe(coro, self._client.loop).result()
 
 
 
@@ -38,11 +38,11 @@ class Music(commands.Cog):
         self._word = ' '.join(args)
         music = VideosSearch(self._word, limit=1)
         link = music.result()["result"][0]["link"]
-        bitrate = ctx.author.voice.channel.bitrate
 
 
         ydl_opts = {
-            'format': 'bestaudio', 
+            'format': 'bestaudio',
+            'cookies': 'cookies.txt',
             'noplaylist':'True',
             'quiet': 'True',
         }
