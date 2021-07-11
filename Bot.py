@@ -39,4 +39,5 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(hangman.Hangman(bot))
 bot.add_cog(knockjokes.jokes(bot))
 
+
 bot.run(TOKEN)
