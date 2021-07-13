@@ -18,7 +18,7 @@ class Music(commands.Cog):
 
 
 
-    @commands.group()
+    @commands.group(aliases=["m"])
     async def music(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.reply("Use a subcommand please!")

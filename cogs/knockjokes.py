@@ -21,7 +21,7 @@ class jokes(commands.Cog):
 
             if message.author.bot == True:
                 return
-                
+
             await message.channel.send("Who's there?")
 
             def check(m):
@@ -62,4 +62,4 @@ class jokes(commands.Cog):
             msg = await self.bot.wait_for('message', timeout=60, check=check)
             await ctx.send(joke[1])
         except asyncio.exceptions.TimeoutError:
-            await ctx.send("You didn't ask me who I am. I'll kill ya someday!")
+            await ctx.send("You didn't ask me who I am. I'm going, hmmph!")
