@@ -38,7 +38,7 @@ class Hangman(commands.Cog):
             return
 
         word = msg.content.replace(" ", "  ")
-        self.states[ctx.guild.id] = GuildState(word, ctx.author)
+        self.states[ctx.guild.id] = GuildState(word.lower(), ctx.author.id)
         await ctx.send("Alright, a hangman game has just started, you can start guessing now!\n```     ——\n    |  |\n       |\n       |\n       |\n       |\n       |\n    ———————```")
         await ctx.send("```Guesses:\nWord: {0}```".format(re.sub('\S', '_ ', word)))
 
@@ -76,11 +76,15 @@ class Hangman(commands.Cog):
 
         elif ctx.guild.id in self.states:
             state = self.states[ctx.guild.id]
-            if ctx.author == state.starter:
-                await ctx.reply("You cannot guess at your own game!")
-                return
+            if ctx.author.id == state.starter:
+                app_info = await self.bot.application_info()
+                if ctx.author.id == app_info.owner.id:
+                    pass
+                else:
+                    await ctx.reply("You cannot guess at your own game!")
+                    return
             word = state.word
-            guess_word = ''.join(args)
+            guess_word = ''.join(args.lower())
             if guess_word in state.word:
 
                 if guess_word in state.guesses:
@@ -90,14 +94,16 @@ class Hangman(commands.Cog):
                 state.guesses.append(guess_word)
                 await ctx.reply("That's correct!")
                 
+                changed_word = self.correct_output(ctx.guild.id, guess_word)
+                state.revealed = len(changed_word) - changed_word.count(' ') - changed_word.count('_')
+                
                 if state.revealed == len(word) - word.count(' '):
-                    await ctx.send("You guessed the phrase! The phrase was {0}".format(state.word))
+                    await ctx.send("You guessed the phrase! The phrase was `{0}`".format(state.word))
                     del self.states[ctx.guild.id]
+                    return
                 
                 await ctx.send(self.output(state.wrong))
-                changed_word = self.correct_output(ctx.guild.id, guess_word)
                 await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), changed_word))
-                state.revealed = len(changed_word) - changed_word.count(' ') - changed_word.count('_')
                 
             else:
                 state.guesses.append(guess_word)
@@ -106,7 +112,7 @@ class Hangman(commands.Cog):
                 await ctx.send(self.output(state.wrong))
                 
                 if state.wrong == 7:
-                    await ctx.send("You lost the game. The phrase was {0}".format(state.word))
+                    await ctx.send("You lost the game. The phrase was `{0}`".format(state.word))
                     del self.states[ctx.guild.id]
                 
                 else:
