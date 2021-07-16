@@ -76,9 +76,9 @@ class Hangman(commands.Cog):
 
         elif ctx.guild.id in self.states:
             state = self.states[ctx.guild.id]
-            # if ctx.author == state.starter:
-            #     await ctx.reply("You cannot guess at your own game!")
-            #     return
+            if ctx.author == state.starter:
+                await ctx.reply("You cannot guess at your own game!")
+                return
             word = state.word
             guess_word = ''.join(args)
             if guess_word in state.word:
