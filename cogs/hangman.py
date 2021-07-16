@@ -23,6 +23,9 @@ class Hangman(commands.Cog):
     async def create(self, ctx):
         if ctx.author.dm_channel == None:
             await ctx.author.create_dm()
+        if ctx.guild.id in self.states:
+            await ctx.send("You cannot start a game when one is already going on in the server, either finish the game or ask {0} to write `$hangman stop`".format(self.states[ctx.guild.id].starter))
+            return
         await ctx.author.dm_channel.send("Please respond with a phrase you would like to use for your hangman game in **{.guild}**. \n\nPlease keep phrases less than 31 characters".format(ctx))
         await ctx.reply("Sent you a dm! Please respond there with the phrase you would like to setup")
 
@@ -35,7 +38,7 @@ class Hangman(commands.Cog):
             return
 
         word = msg.content.replace(" ", "  ")
-        self.states[ctx.guild.id] = GuildState(word)
+        self.states[ctx.guild.id] = GuildState(word, ctx.author)
         await ctx.send("Alright, a hangman game has just started, you can start guessing now!\n```     ——\n    |  |\n       |\n       |\n       |\n       |\n       |\n    ———————```")
         await ctx.send("```Guesses:\nWord: {0}```".format(re.sub('\S', '_ ', word)))
 
@@ -69,39 +72,73 @@ class Hangman(commands.Cog):
     async def guess(self, ctx, args):
         if len(args) != 1:
             await ctx.reply("Only 1 letter please.")
+
+
         elif ctx.guild.id in self.states:
             state = self.states[ctx.guild.id]
+            # if ctx.author == state.starter:
+            #     await ctx.reply("You cannot guess at your own game!")
+            #     return
             word = state.word
             guess_word = ''.join(args)
             if guess_word in state.word:
+
+                if guess_word in state.guesses:
+                    await ctx.reply("That letter has already been guessed, please try another")
+                    return
+
                 state.guesses.append(guess_word)
                 await ctx.reply("That's correct!")
-                await ctx.send(self.output(state.wrong))
+                
                 if state.revealed == len(word) - word.count(' '):
-                    await ctx.send("You guesses the phrase! The phrase was {0}".format(state.word))
-                else: 
-                    await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), self.correct_output(ctx.guild.id, guess_word)))
-                    state.revealed += 1
+                    await ctx.send("You guessed the phrase! The phrase was {0}".format(state.word))
+                    del self.states[ctx.guild.id]
+                
+                await ctx.send(self.output(state.wrong))
+                changed_word = self.correct_output(ctx.guild.id, guess_word)
+                await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), changed_word))
+                state.revealed = len(changed_word) - changed_word.count(' ') - changed_word.count('_')
+                
             else:
                 state.guesses.append(guess_word)
                 await ctx.reply("That's wrong.")
                 state.wrong += 1
                 await ctx.send(self.output(state.wrong))
+                
                 if state.wrong == 7:
                     await ctx.send("You lost the game. The phrase was {0}".format(state.word))
+                    del self.states[ctx.guild.id]
+                
                 else:
                     await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), self.correct_output(ctx.guild.id, guess_word)))
+
+
         else:
-            ctx.reply("No hangman game is going on!")
+            await ctx.reply("No hangman game is going on!")
+
+
+
+    @hangman.command()
+    async def stop(self, ctx):
+        if ctx.guild.id in self.states:
+            state = self.states[ctx.guild.id]
+            if state.starter == ctx.author:
+                del self.states[ctx.guild.id]
+                await ctx.reply("Stopped the running game, another one can be started now")
+            else:
+                await ctx.reply("You are not the starter of this game, {0} is".format(state.starter))
+        else:
+            await ctx.reply("No game is going on right now in this server")
 
 
 
 class GuildState():
-    def __init__(self, word):
+    def __init__(self, word, starter):
         self.word = word
         self.guesses = []
         self.revealed = 0
         self.wrong = 0
+        self.starter = starter
 
 
     def wrong_guess(self):
