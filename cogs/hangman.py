@@ -128,7 +128,7 @@ class Hangman(commands.Cog):
     async def stop(self, ctx):
         if ctx.guild.id in self.states:
             state = self.states[ctx.guild.id]
-            if state.starter == ctx.author:
+            if state.starter == ctx.author.id:
                 del self.states[ctx.guild.id]
                 await ctx.reply("Stopped the running game, another one can be started now")
             else:
