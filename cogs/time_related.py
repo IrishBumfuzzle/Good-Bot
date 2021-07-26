@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands, tasks
 import datetime
-import sqlite3
 from time import time
 
 
 
-def time_convertor(hours, minutes, seconds):
+def time_convertor(hours=0, minutes=0, seconds=0):
     hours_convert = hours * 3600
     minutes_convert = minutes * 60
     return seconds + hours_convert + minutes_convert 
@@ -17,16 +16,17 @@ class time_related(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        # self.remind_checker.start()
-        self.con = sqlite3.connect(':memory:')
-        self.cur = self.con.cursor()
-        self.cur.execute("CREATE TABLE reminders (epoch TEXT, author TEXT)")
+        self.remind_checker.start()
+        self.states = []
 
 
 
-    # @tasks.loop(seconds=1.0)
-    # async def remind_checker(self):
-    #     if int(time()) == 
+    @tasks.loop(seconds=1.0)
+    async def remind_checker(self):
+        for i in range(len(self.states)):
+            if self.states[i].epoch <= int(time()):
+                await self.states[i].author.send("Your timer is up")
+                self.states.pop(i)
 
 
 
@@ -50,16 +50,34 @@ class time_related(commands.Cog):
     async def creation(self, ctx, arg):
         timestamp = (int(arg) >> 22) + 1420070400000
         time = int(timestamp/1000)
-        await ctx.reply("The time of creation is <t:{0}> in your timezone".format(time))
-        await ctx.send("If there is garbage output, please verify the id is correct")
+        await ctx.reply("The time of creation is <t:{0}> in your timezone\nIf there is garbage output, please verify the id is correct".format(time))
         
 
 
     @times.command()
     async def remind(self, ctx, *args):
-        lis = ' '.join(args).split()
-        second = time_convertor(int(lis[0]), int(lis[1]), int(lis[2]))
+        """DOES SOMETHING"""
+        liste = ' '.join(args)
+        lis = liste.split("h")
+        hours = lis[0]
+        lis1 = lis[1].split("m")
+        minutes = lis1[0]
+        seconds = lis1[1]
+        second = time_convertor(int(hours), int(minutes), int(seconds.replace("s", "")))
         fut_time = int(time()) + second
-        msg = await ctx.send("Set reminder for <t:{0}>".format(fut_time))
-        self.cur.execute("INSERT INTO reminders VALUES ('{0}', '{1}')".format(fut_time, msg))
+        msg = await ctx.send("Reminder set for <t:{0}>".format(fut_time))
+        if ctx.author.dm_channel == None:
+            dm = await ctx.author.create_dm()
+        else:
+            dm = ctx.author.dm_channel
+        state = GuildState(fut_time, dm)
+        self.states.append(state)
+        
+
+
+class GuildState():
+    def __init__(self, epoch, author):
+        super().__init__()
+        self.epoch = epoch
+        self.author = author
             
