@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from youtubesearchpython import VideosSearch
-import youtube_dl
+import yt_dlp
 import asyncio
 import os
 
@@ -47,9 +47,11 @@ class Music(commands.Cog):
             'quiet': 'True',
         }
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(link, download=False)
-        URL = info['formats'][0]['url']
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.sanitize_info(ydl.extract_info(link, download=False))
+            print(info['formats'][3])
+        URL = info['formats'][3]['url']
+        print(URL)
         
 
         self._client = await ctx.author.voice.channel.connect()
