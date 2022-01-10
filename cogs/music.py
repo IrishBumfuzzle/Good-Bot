@@ -27,6 +27,7 @@ class Music(commands.Cog):
 
     @music.command()
     async def play(self, ctx, *args):
+        '''Add music's name or link after the command for playing through Youtube'''
         if not ctx.author.voice:
             await ctx.reply("Join a voice channel first!")
             return
@@ -64,6 +65,7 @@ class Music(commands.Cog):
 
     @music.command()
     async def stop(self, ctx):
+        '''Stops the music playback, if any'''
         if ctx.guild.voice_client:
             await ctx.guild.voice_client.disconnect()
         else:

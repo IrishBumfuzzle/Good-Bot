@@ -14,17 +14,19 @@ class Hangman(commands.Cog):
 
     @commands.group(aliases=["h"])
     async def hangman(self, ctx):
+        '''Start a game by adding create in front of the command'''
         if ctx.invoked_subcommand is None:
-            await ctx.reply("Please use a subcommand!")
+            await ctx.reply("Please use a subcommand, you can start the game by writing {self.bot.command_prefix}")
 
 
 
     @hangman.command()
     async def create(self, ctx):
+        '''Creates a hangman game, will dm you asking for the word to start the game with'''
         if ctx.author.dm_channel == None:
             await ctx.author.create_dm()
         if ctx.guild.id in self.states:
-            await ctx.send("You cannot start a game when one is already going on in the server, either finish the game or ask {0} to write `$hangman stop`".format(self.states[ctx.guild.id].starter))
+            await ctx.send("You cannot start a game when one is already going on in the server, either finish the game or ask <@{0}> to write `$hangman stop`".format(self.states[ctx.guild.id].starter))
             return
         await ctx.author.dm_channel.send("Please respond with a phrase you would like to use for your hangman game in **{.guild}**. \n\nPlease keep phrases less than 31 characters".format(ctx))
         await ctx.reply("Sent you a dm! Please respond there with the phrase you would like to setup")
