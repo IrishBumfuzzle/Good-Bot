@@ -3,3 +3,5 @@ poetry.lock
 pyproject.toml
 .replit
 cookies.txt
+env/
+.vscode/
