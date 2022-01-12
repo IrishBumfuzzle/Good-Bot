@@ -1,7 +1,7 @@
 __pycache__/
 poetry.lock
-pyproject.toml
+
 .replit
 cookies.txt
-env/
+.venv/
 .vscode/

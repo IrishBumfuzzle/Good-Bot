@@ -1,9 +1,9 @@
-import discord
-from discord.ext import commands
+import disnake
+from disnake.ext import commands
 from youtubesearchpython import VideosSearch
 import yt_dlp
 import asyncio
-import os
+
 
 
 class Music(commands.Cog):
@@ -26,7 +26,7 @@ class Music(commands.Cog):
 
 
     @music.command()
-    async def play(self, ctx, *args):
+    async def play(self, ctx, *, args):
         '''Add music's name or link after the command for playing through Youtube'''
         if not ctx.author.voice:
             await ctx.reply("Join a voice channel first!")
@@ -35,10 +35,14 @@ class Music(commands.Cog):
             await ctx.reply("Please provide name of song!")
             return
 
-        
-        self._word = ' '.join(args)
+
+        self._word = args
+        # self._word = re.sub('[^A-Za-z0-9 ]+', '', ' '.join(args))
         music = VideosSearch(self._word, limit=1)
         link = music.result()["result"][0]["link"]
+
+
+        self._client = await ctx.author.voice.channel.connect()  
 
 
         ydl_opts = {
@@ -50,18 +54,13 @@ class Music(commands.Cog):
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.sanitize_info(ydl.extract_info(link, download=False))
-            print(info['formats'][3])
         URL = info['formats'][3]['url']
-        print(URL)
         
 
-        self._client = await ctx.author.voice.channel.connect()
-        
-        
+        self._client.play(disnake.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=self.after)
         await ctx.send(link)
-        self._client.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=self.after)
 
-    
+
 
     @music.command()
     async def stop(self, ctx):
