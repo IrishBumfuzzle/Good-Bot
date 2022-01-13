@@ -16,7 +16,7 @@ class Hangman(commands.Cog):
     async def hangman(self, ctx):
         '''Start a game by adding create in front of the command'''
         if ctx.invoked_subcommand is None:
-            await ctx.reply("Please use a subcommand, you can start the game by writing {self.bot.command_prefix}")
+            await ctx.reply("Please use a subcommand, you can start the game by writing {0}h create".format(self.bot.command_prefix))
 
 
 
