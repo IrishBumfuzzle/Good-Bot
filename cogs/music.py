@@ -1,8 +1,10 @@
+import imp
 import disnake
 from disnake.ext import commands
 from youtubesearchpython import VideosSearch
 import yt_dlp
 import asyncio
+from threading import Thread
 
 
 
@@ -10,6 +12,23 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.states = {}
+
+
+
+    def perms_handler(self, ctx):
+        client = ctx.guild.voice_client
+        author = ctx.author.voice
+        value = []
+        def in_func(list):
+            if client and author and client.channel == author.channel:
+                list.append(True)
+            else:
+                asyncio.run_coroutine_threadsafe(ctx.reply("You are not in the channel where audio is being played currently"), self._client.loop)
+                list.append(False)
+        new_thread = Thread(target=in_func, args=(value, ))
+        new_thread.start()
+        new_thread.join()
+        return value[0]
 
 
 
@@ -76,11 +95,15 @@ class Music(commands.Cog):
             self._client = await ctx.author.voice.channel.connect()
             self._guild = ctx.guild
         except disnake.errors.ClientException:
-            state = self.state_handler(ctx.guild)
-            state.add_queue(link)
-            state.starter_message = ctx
-            await ctx.reply("Added {0} to queue".format(link))
-            return
+            if self.perms_handler(ctx):
+                state = self.state_handler(ctx.guild)
+                state.add_queue(link)
+                state.starter_message = ctx
+                await ctx.reply("Added {0} to queue".format(link))
+                return
+            else:
+                return
+                
 
         self.play_song(self._client, link)
         await ctx.reply("Now playing " + link)
@@ -91,20 +114,62 @@ class Music(commands.Cog):
     async def stop(self, ctx):
         '''Stops the music playback, if any'''
         if ctx.guild.voice_client:
-            await self.clearqueue(ctx)
-            await ctx.guild.voice_client.disconnect()
-            await ctx.reply("Stopped playback")
+            if self.perms_handler(ctx):
+                await self.clearqueue(ctx)
+                await ctx.guild.voice_client.disconnect()
+                await ctx.reply("Stopped playback")
         else:
-            await ctx.reply("I'm not playing any music right now!")
+            await ctx.reply("I'm not playing any song right now!")
+
+
+
+    @music.command()
+    async def skip(self, ctx):
+        '''Skips the current playing song'''
+        if ctx.guild.voice_client:
+            ctx.guild.voice_client.stop()
+        else:
+            ctx.reply("I'm not playing any song right now!")
 
 
 
     @music.command(aliases=["cq"])
     async def clearqueue(self, ctx):
         '''Clears the queue'''
+        if self.perms_handler(ctx):
+            state = self.state_handler(ctx.guild)
+            state.queue = []
+            await ctx.reply("Cleared queue")
+
+
+
+    @music.command(aliases=["q"])
+    async def queue(self, ctx):
         state = self.state_handler(ctx.guild)
-        state.queue = []
-        await ctx.reply("Cleared queue")
+        if state.queue:
+            queue = ""
+            for i in range(len(state.queue)):
+                queue = queue + str(i+1) + ". " + state.queue[i] + "\n"
+            await ctx.reply(queue)
+        else:
+            await ctx.reply("Queue is empty")
+
+
+
+    @music.command(aliases=["resume", "p", "r"])
+    async def pause(self, ctx):
+        '''Pauses or resumes any currently playing song'''
+        if ctx.guild.voice_client:
+            if self.perms_handler(ctx):
+                client = ctx.guild.voice_client
+                if client.is_paused():
+                    client.resume()
+                    ctx.reply("Resumed")
+                else:
+                    client.pause()
+                    ctx.reply("Paused")
+        else:
+            ctx.reply("I'm not playing any music right now!")
 
 
 
