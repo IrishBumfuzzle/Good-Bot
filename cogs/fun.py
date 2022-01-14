@@ -3,10 +3,12 @@ from disnake.ext import commands
 import asyncio
 from random import randint
 import sqlite3
+from foaas import fuck
+import re
 
 
 
-class jokes(commands.Cog):
+class Fun(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
@@ -35,13 +37,13 @@ class jokes(commands.Cog):
 
     @commands.command()
     async def knockknock(self, ctx):
-        await ctx.send("Knock knock!")
+        await ctx.reply("Knock knock!")
 
         def check2(m):
             return m.channel == ctx.channel and m.author == ctx.author and "there" in m.content.lower()
 
         try:
-            messa = await self.bot.wait_for('message', timeout=60, check=check2)
+            await self.bot.wait_for('message', timeout=60, check=check2)
         except asyncio.exceptions.TimeoutError:
             await ctx.send("You took too much time to reply, so the person slammed the door in your face")
 
@@ -59,7 +61,20 @@ class jokes(commands.Cog):
             return m.channel == ctx.channel and m.author == ctx.author and "who" in m.content.lower()
 
         try:
-            msg = await self.bot.wait_for('message', timeout=60, check=check)
+            await self.bot.wait_for('message', timeout=60, check=check)
             await ctx.send(joke[1])
         except asyncio.exceptions.TimeoutError:
             await ctx.send("You didn't ask me who I am. I'm going, hmmph!")
+
+
+
+    @commands.command()
+    async def fuck(self, ctx):
+        message = ctx.message.content.lower()
+        match = re.search('(?<=<@!)\d{18}(?=>)', message)
+        if match:
+            message = fuck.random(from_=f"<@!{ctx.author.id}>", name=f"<@!{message[match.start():match.end()]}>").text
+            await ctx.reply(message)
+        else:
+            message = fuck.random(from_=f"<@!{ctx.author.id}>").text
+            await ctx.reply(message)

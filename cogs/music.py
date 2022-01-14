@@ -1,4 +1,3 @@
-import imp
 import disnake
 from disnake.ext import commands
 from youtubesearchpython import VideosSearch
@@ -56,7 +55,7 @@ class Music(commands.Cog):
 
         def after(error):
             state = self.state_handler(self._guild)
-            next_song = state.remove_queue()
+            next_song = state.pop_queue()
             if next_song:
                 self.play_song(client, next_song)
             else:
@@ -185,7 +184,7 @@ class GuildState():
         self.queue.append(song)
 
 
-    def remove_queue(self):
+    def pop_queue(self):
         if self.queue:
             return self.queue.pop(0)
         else:

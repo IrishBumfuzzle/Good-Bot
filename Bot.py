@@ -1,7 +1,7 @@
 import os
 import disnake
 from disnake.ext import commands
-from cogs import hangman, knockjokes, music, time_related
+from cogs import fun, hangman, music, time_related
 import logging
 
 logging.basicConfig()
@@ -44,7 +44,7 @@ async def on_message(message):
 
 bot.add_cog(music.Music(bot))
 bot.add_cog(hangman.Hangman(bot))
-bot.add_cog(knockjokes.jokes(bot))
+bot.add_cog(fun.Fun(bot))
 bot.add_cog(time_related.time_related(bot))
 
 
