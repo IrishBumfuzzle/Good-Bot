@@ -48,10 +48,10 @@ class Fun(commands.Cog):
             await ctx.send("You took too much time to reply, so the person slammed the door in your face")
 
 
-        no = randint(1, 99)
+        number = randint(1, 99)
         con = sqlite3.connect("Data.db")
         cur = con.cursor()
-        out = cur.execute(f"SELECT STARTER, PUNCHLINE FROM jokes WHERE id = {no}")
+        out = cur.execute(f"SELECT STARTER, PUNCHLINE FROM jokes WHERE id = {number}")
         joke = out.fetchone()
         
         
