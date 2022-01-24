@@ -3,7 +3,7 @@ from disnake.ext import commands
 import asyncio
 from random import randint
 import sqlite3
-from foaas import fuck
+from foaas import random
 import re
 
 
@@ -73,8 +73,8 @@ class Fun(commands.Cog):
         message = ctx.message.content.lower()
         match = re.search('(?<=<@!)\d{18}(?=>)', message)
         if match:
-            message = fuck.random(from_=f"<@!{ctx.author.id}>", name=f"<@!{message[match.start():match.end()]}>").text
+            message = random(from_name=f"<@!{ctx.author.id}>", name=f"<@!{message[match.start():match.end()]}>")
             await ctx.reply(message)
         else:
-            message = fuck.random(from_=f"<@!{ctx.author.id}>").text
+            message = random(from_name=f"<@!{ctx.author.id}>")
             await ctx.reply(message)
