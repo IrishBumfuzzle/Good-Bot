@@ -91,21 +91,21 @@ class Hangman(commands.Cog):
 
                 if guess_word in state.guesses:
                     await ctx.reply("That letter has already been guessed, please try another")
-                    return
 
-                state.guesses.append(guess_word)
-                await ctx.reply("That's correct!")
-                
-                changed_word = self.correct_output(ctx.guild.id, guess_word)
-                state.revealed = len(changed_word) - changed_word.count(' ') - changed_word.count('_')
-                
-                if state.revealed == len(word) - word.count(' '):
-                    await ctx.send("You guessed the phrase! The phrase was `{0}`".format(state.word))
-                    del self.states[ctx.guild.id]
-                    return
-                
-                await ctx.send(self.output(state.wrong))
-                await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), changed_word))
+                else:
+                    state.guesses.append(guess_word)
+                    await ctx.reply("That's correct!")
+                    
+                    changed_word = self.correct_output(ctx.guild.id, guess_word)
+                    state.revealed = len(changed_word) - changed_word.count(' ') - changed_word.count('_')
+                    
+                    if state.revealed == len(word) - word.count(' '):
+                        await ctx.send("You guessed the phrase! The phrase was `{0}`".format(state.word))
+                        del self.states[ctx.guild.id]
+
+                    else:
+                        await ctx.send(self.output(state.wrong))
+                        await ctx.send("```Guesses: {0}\nWord: {1}```".format(state.wrong_guess(), changed_word))
                 
             else:
                 state.guesses.append(guess_word)
