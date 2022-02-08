@@ -61,7 +61,7 @@ class Hangman(commands.Cog):
 
 
 
-    def correct_output(self, guild_id, letter):
+    def correct_output(self, guild_id):
         state = self.states[guild_id]
         word = state.word
         guesses = state.guesses

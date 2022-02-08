@@ -11,7 +11,7 @@ TOKEN = os.environ['TOKEN']
 intents = disnake.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix="$", intents=intents)
 
 
 @bot.event
