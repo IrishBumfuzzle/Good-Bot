@@ -1,7 +1,7 @@
 import os
 import disnake
 from disnake.ext import commands
-from cogs import fun, hangman, music, time_related
+from cogs import fun, hangman, music, time_related, health_form
 import logging
 
 logging.basicConfig()
@@ -46,6 +46,6 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(hangman.Hangman(bot))
 bot.add_cog(fun.Fun(bot))
 bot.add_cog(time_related.time_related(bot))
-
+bot.add_command(health_form.fill)
 
 bot.run(TOKEN)
