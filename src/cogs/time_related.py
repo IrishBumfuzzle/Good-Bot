@@ -4,12 +4,10 @@ import datetime
 from time import time
 
 
-
 def time_convertor(hours=0, minutes=0, seconds=0):
     hours_convert = hours * 3600
     minutes_convert = minutes * 60
-    return seconds + hours_convert + minutes_convert 
-
+    return seconds + hours_convert + minutes_convert
 
 
 class time_related(commands.Cog):
@@ -19,16 +17,12 @@ class time_related(commands.Cog):
         self.remind_checker.start()
         self.states = []
 
-
-
     @tasks.loop(seconds=1.0)
     async def remind_checker(self):
         for i in range(len(self.states)):
             if self.states[i].epoch <= int(time()):
                 await self.states[i].author.send("Your timer is up")
                 self.states.pop(i)
-
-
 
     @commands.group(aliases=["t"])
     async def times(self, ctx):
@@ -40,24 +34,24 @@ class time_related(commands.Cog):
 
     #     if len(args) != 3:
     #         ctx.reply("Specify amount of time in `hours minutes seconds`: `h m s`, if the amount of arguments is less than 3, then they will be used from last")
-        
+
     #     time = ''.join(args)
     #     time_list = time.split()
-
-
 
     @times.command()
     async def creation(self, ctx, arg):
         timestamp = (int(arg) >> 22) + 1420070400000
-        time = int(timestamp/1000)
-        await ctx.reply("The time of creation is <t:{0}> in your timezone\nIf there is garbage output, please verify the id is correct".format(time))
-        
-
+        time = int(timestamp / 1000)
+        await ctx.reply(
+            "The time of creation is <t:{0}> in your timezone\nIf there is garbage output, please verify the id is correct".format(
+                time
+            )
+        )
 
     @times.command()
     async def remind(self, ctx, *args):
         """DOES SOMETHING"""
-        liste = ' '.join(args)
+        liste = " ".join(args)
         lis = liste.split("h")
         hours = lis[0]
         lis1 = lis[1].split("m")
@@ -72,12 +66,10 @@ class time_related(commands.Cog):
             dm = ctx.author.dm_channel
         state = GuildState(fut_time, dm)
         self.states.append(state)
-        
 
 
-class GuildState():
+class GuildState:
     def __init__(self, epoch, author):
         super().__init__()
         self.epoch = epoch
         self.author = author
-            
