@@ -11,7 +11,12 @@ def fill_form(username, password):
     payload = {"txtUserId": username, "txtPassword": password, "isSubmit": "Yes"}
 
     with requests.Session() as s:
-        s.post("https://dpsfsis.com/Users/index.php", data=payload)
+        login = s.post("https://dpsfsis.com/Users/index.php", data=payload)
+        if (
+            '<script>alert("Password does not match ! Please Try Again")</script>'
+            in login.text
+        ):
+            return False
 
         tree = etree.HTML(
             s.get("https://dpsfsis.com/Admin/SelfDeclarationForm.php").text
@@ -34,6 +39,7 @@ def fill_form(username, password):
             "sadmission": sadmission,
         }
         s.post("https://dpsfsis.com/Admin/SelfDeclarationForm.php", data=health_form)
+        return True
 
 
 @commands.command()
@@ -67,5 +73,7 @@ async def fill(ctx):
         )
     else:
         creds = msg.content.split(":")
-        fill_form(creds[0], creds[1])
-        await ctx.author.dm_channel.send("Filled, but maybe verify it")
+        if fill_form(creds[0], creds[1]):
+            await ctx.author.dm_channel.send("Filled, but maybe verify it")
+        else:
+            await ctx.author.dm_channel.send("Error: wrong id or password")
