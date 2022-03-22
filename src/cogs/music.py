@@ -118,9 +118,10 @@ class Music(commands.Cog):
     async def skip(self, ctx):
         """Skips the current playing song"""
         if ctx.guild.voice_client:
+            await ctx.reply("Skipped song")
             ctx.guild.voice_client.stop()
         else:
-            ctx.reply("I'm not playing any song right now!")
+            await ctx.reply("I'm not playing any song right now!")
 
     @music.command(aliases=["cq"])
     async def clearqueue(self, ctx):
@@ -149,12 +150,12 @@ class Music(commands.Cog):
                 client = ctx.guild.voice_client
                 if client.is_paused():
                     client.resume()
-                    ctx.reply("Resumed")
+                    await ctx.reply("Resumed")
                 else:
                     client.pause()
-                    ctx.reply("Paused")
+                    await ctx.reply("Paused")
         else:
-            ctx.reply("I'm not playing any music right now!")
+            await ctx.reply("I'm not playing any music right now!")
 
 
 class GuildState:
