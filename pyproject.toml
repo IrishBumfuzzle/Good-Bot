@@ -6,12 +6,12 @@ authors = ["IrishBumfuzzle"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-youtube-search-python = "^1.5.3"
-yt-dlp = "^2021.12.27"
-Flask = "^2.0.2"
-disnake = {extras = ["voice"], version = "^2.3.0"}
-requests = "^2.27.1"
-lxml = "^4.7.1"
+youtube-search-python = "*"
+yt-dlp = "*"
+Flask = "*"
+disnake = {extras = ["voice"], version = "*"}
+requests = "*"
+lxml = "*"
 
 [tool.poetry.dev-dependencies]
 
