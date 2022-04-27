@@ -1,5 +1,6 @@
 import configparser
 import disnake
+import os
 from disnake.ext import commands
 from cogs import fun, hangman, music, time_related, health_form, reddit
 import logging
@@ -9,6 +10,8 @@ logging.basicConfig()
 config = configparser.ConfigParser()
 config.read("config.ini")
 TOKEN = config["REQUIRED"]["token"]
+if TOKEN == '':
+    TOKEN = os.getenv("TOKEN")
 FREE_GAME_FINDINGS_CHANNEL_ID = config["FreeGameFindings"]["channel_id"]
 
 intents = disnake.Intents.default()
