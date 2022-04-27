@@ -1,6 +1,6 @@
 __pycache__/
 poetry.lock
-
+config.ini
 .replit
 cookies.txt
 .venv/
