@@ -12,6 +12,7 @@ Flask = "*"
 disnake = {extras = ["voice"], version = "*"}
 requests = "*"
 lxml = "*"
+feedparser = "*"
 
 [tool.poetry.dev-dependencies]
 

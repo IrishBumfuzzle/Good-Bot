@@ -1,12 +1,15 @@
-import os
+import configparser
 import disnake
 from disnake.ext import commands
-from cogs import fun, hangman, music, time_related, health_form
+from cogs import fun, hangman, music, time_related, health_form, reddit
 import logging
 
 logging.basicConfig()
 
-TOKEN = os.environ["TOKEN"]
+config = configparser.ConfigParser()
+config.read('config.ini')
+TOKEN = config['REQUIRED']['token']
+FREE_GAME_FINDINGS_CHANNEL_ID = config["FreeGameFindings"]['channel_id']
 
 intents = disnake.Intents.default()
 intents.members = True
@@ -49,5 +52,7 @@ bot.add_cog(hangman.Hangman(bot))
 bot.add_cog(fun.Fun(bot))
 bot.add_cog(time_related.time_related(bot))
 bot.add_command(health_form.fill)
+if FREE_GAME_FINDINGS_CHANNEL_ID:
+    bot.add_cog(reddit.FreeGameFindings(bot, int(FREE_GAME_FINDINGS_CHANNEL_ID)))
 
 bot.run(TOKEN)

@@ -1,4 +1,3 @@
-import disnake
 from disnake.ext import commands, tasks
 import datetime
 from time import time
@@ -14,7 +13,6 @@ class time_related(commands.Cog):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
-        self.remind_checker.start()
         self.states = []
 
     @tasks.loop(seconds=1.0)
@@ -50,7 +48,7 @@ class time_related(commands.Cog):
 
     @times.command()
     async def remind(self, ctx, *args):
-        """DOES SOMETHING"""
+        """A timer, write `h m s` letters after the specification"""
         liste = " ".join(args)
         lis = liste.split("h")
         hours = lis[0]
@@ -66,10 +64,10 @@ class time_related(commands.Cog):
             dm = ctx.author.dm_channel
         state = GuildState(fut_time, dm)
         self.states.append(state)
+        self.remind_checker.start()
 
 
 class GuildState:
     def __init__(self, epoch, author):
-        super().__init__()
         self.epoch = epoch
         self.author = author
