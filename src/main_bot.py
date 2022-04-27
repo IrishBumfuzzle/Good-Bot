@@ -7,9 +7,9 @@ import logging
 logging.basicConfig()
 
 config = configparser.ConfigParser()
-config.read('config.ini')
-TOKEN = config['REQUIRED']['token']
-FREE_GAME_FINDINGS_CHANNEL_ID = config["FreeGameFindings"]['channel_id']
+config.read("config.ini")
+TOKEN = config["REQUIRED"]["token"]
+FREE_GAME_FINDINGS_CHANNEL_ID = config["FreeGameFindings"]["channel_id"]
 
 intents = disnake.Intents.default()
 intents.members = True
