@@ -1,6 +1,7 @@
 import time
 from disnake.ext import commands, tasks
 import feedparser
+import asyncio
 import pickle
 
 
@@ -9,7 +10,7 @@ class FreeGameFindings(commands.Cog):
         self.bot = bot
         self.channel_id = channel_id
         self.check_for_new_posts_epic.start()
-        self.check_for_new_posts_steam()
+        self.check_for_new_posts_steam.start()
 
     @tasks.loop(hours=1)
     async def check_for_new_posts_epic(self):
@@ -22,7 +23,7 @@ class FreeGameFindings(commands.Cog):
                 last_time = pickle.load(f)
         except:
             with open("last_time_epic.data", "wb") as f:
-                last_time = time.localtime()
+                last_time = time.mktime(time.gmtime())
                 pickle.dump(last_time, f)
 
         for i in d.entries[::-1]:
@@ -45,7 +46,7 @@ class FreeGameFindings(commands.Cog):
                 last_time = pickle.load(f)
         except:
             with open("last_time_steam.data", "wb") as f:
-                last_time = time.localtime()
+                last_time = time.mktime(time.gmtime())
                 pickle.dump(last_time, f)
 
         for i in d.entries[::-1]:
