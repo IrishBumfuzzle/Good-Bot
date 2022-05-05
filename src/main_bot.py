@@ -10,7 +10,7 @@ logging.basicConfig()
 config = configparser.ConfigParser()
 config.read("config.ini")
 TOKEN = config["REQUIRED"]["token"]
-if TOKEN == '':
+if TOKEN == "":
     TOKEN = os.getenv("TOKEN")
 FREE_GAME_FINDINGS_CHANNEL_ID = config["FreeGameFindings"]["channel_id"]
 
